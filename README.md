@@ -1,6 +1,6 @@
-# AI Teaching Assistant -- Class 5
+# AI Teaching Assistant
 
-An AI-powered Teaching Assistant designed for Class 5 students that
+An AI-powered Teaching Assistant designed for students that
 supports:
 
 -   **Explain Mode (RAG-based Q&A)**
