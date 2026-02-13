@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/AI_Teaching_Assistant.iml" filepath="$PROJECT_DIR$/.idea/AI_Teaching_Assistant.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Chatbot_MCP/.idea/Chatbot_MCP.iml" filepath="$PROJECT_DIR$/../Chatbot_MCP/.idea/Chatbot_MCP.iml" />
+    </modules>
+  </component>
+</project>
