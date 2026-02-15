@@ -1,0 +1,11 @@
+Topic 5: Message Queues and Event Driven Architecture
+Why: Decoupling Components for Resilience and Scalability
+
+Content:
+Message queues enable asynchronous communication between system components. Instead of direct service to service calls, producers send messages to a queue, and consumers process them independently. This decouples services and improves fault tolerance.
+
+In an event driven architecture, services react to events rather than making synchronous requests. This allows systems to scale more easily and handle traffic spikes gracefully. Message brokers manage message storage, delivery, and acknowledgment.
+
+Queues can operate in point to point mode, where one consumer processes each message, or in publish subscribe mode, where multiple consumers receive the same event. Features such as retry mechanisms, dead letter queues, and message ordering help maintain reliability.
+
+Design considerations include idempotency, ensuring that processing the same message multiple times does not cause incorrect behavior, and handling back pressure when consumers are slower than producers. Message queues are widely used in microservices, streaming systems, and large scale distributed platforms.

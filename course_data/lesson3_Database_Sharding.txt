@@ -1,0 +1,11 @@
+Topic 3: Database Sharding
+Why: Scaling Databases Horizontally
+
+Content:
+Database sharding is a technique used to horizontally partition data across multiple database instances. Each shard holds a subset of the total data, allowing the system to scale beyond the limits of a single machine.
+
+Sharding is typically based on a shard key, which determines how data is distributed. A good shard key ensures even distribution of data and queries, avoiding hotspots. Examples include hashing a user ID or partitioning by geographic region.
+
+There are different sharding approaches such as range based sharding, hash based sharding, and directory based sharding. Range based sharding divides data based on value ranges, while hash based sharding uses a hash function to distribute data evenly.
+
+Challenges in sharding include rebalancing data when nodes are added or removed, handling cross shard queries, maintaining consistency, and ensuring fault tolerance. Despite these complexities, sharding is critical for large scale systems that need to manage massive datasets and high traffic volumes.

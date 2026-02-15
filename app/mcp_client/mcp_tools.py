@@ -98,7 +98,7 @@ class PracticeResultsClient:
         # List available tools (optional but useful)
         response = await self.session.list_tools()
         tools = response.tools
-        print("\nConnected to server with tools:", [tool.name for tool in tools])
+        #print("\nConnected to server with tools:", [tool.name for tool in tools])
 
         self.available_tools = [
             {

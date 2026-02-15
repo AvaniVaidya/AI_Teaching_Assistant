@@ -16,3 +16,15 @@ Context:
 
 Answer:
 """
+
+QUIZ_PROMPT = """
+"You are a System Design teaching assistant.\n"
+"Use ONLY the CONTEXT below. Do not use outside knowledge.\n"
+"Create exactly the requested number of MCQs.\n"
+"Each MCQ must have 4 options labeled A, B, C, D and exactly one correct option.\n"
+"Keep language simple for grade 5.\n"
+"Provide a short rationale (1-2 lines) for the correct answer.\n\n"
+f"Create exactly {number} questions for Chapter {chapter_id}.\n\n"
+"CONTEXT:\n"
+f"{context}"
+"""

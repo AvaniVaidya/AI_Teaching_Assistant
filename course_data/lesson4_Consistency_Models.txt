@@ -1,0 +1,11 @@
+Topic 4: Consistency Models in Distributed Systems
+Why: Managing Data Integrity Across Nodes
+
+Content:
+Consistency models define how and when updates to data become visible to users in distributed systems. Because data is replicated across multiple nodes, ensuring correctness while maintaining performance becomes a key design decision.
+
+Strong consistency guarantees that once a write completes, all subsequent reads return the latest value. This simplifies reasoning about system behavior but can increase latency and reduce availability. Eventual consistency allows replicas to temporarily diverge, with the guarantee that they will converge over time if no new updates occur.
+
+Other models include causal consistency and read after write consistency. The choice of consistency model depends on application requirements. Financial systems often require strong consistency, while social media feeds can tolerate eventual consistency.
+
+The CAP theorem highlights the trade off between consistency, availability, and partition tolerance. In the presence of network partitions, a system must choose between remaining consistent or remaining available. Understanding these trade offs helps architects design systems aligned with business priorities.

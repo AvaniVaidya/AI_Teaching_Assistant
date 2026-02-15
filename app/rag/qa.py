@@ -126,24 +126,26 @@ def run_chatbot() -> None:
         anthropic_api_key=api_key,
     )
 
-    print("\nClass 5 Science TA (RAG Chatbot)")
+    #print("\nClass 5 Science TA (RAG Chatbot)")
     print("Type your question. Type 'exit' to quit.\n")
 
     messages = [
         {
             "role": "system",
-            "content": "You are a Class 5 Science Teaching Assistant. Follow the Rules mentioned in the Prompt."
+            "content": "You are a System Design Teaching Assistant. Follow the Rules mentioned in the Prompt."
         }
     ]
 
     while True:
-        user_input = input("You: ").strip()
+        #user_input = input("You: ").strip()
+        user_input = input().strip()
 
         # Exit conditions
         if not user_input:
             continue
         if user_input.lower() in {"exit", "quit"}:
-            print("TA: Bye! Keep being curious 🧠📚")
+            #print("TA: Bye! Keep being curious 🧠📚")
+            print("Bye! Keep being curious 🧠📚")
             break
 
         messages.append({"role": "user", "content": user_input})
@@ -153,13 +155,14 @@ def run_chatbot() -> None:
         messages.append({"role": "assistant", "content": out["answer"]})
 
         # Print answer
-        print("\nTA:", out["answer"])
+        #print("\nTA:", out["answer"])
+        print(out["answer"])
 
         # Print citations (if any)
         if out["citations"]:
-            print("Sources:", ", ".join(out["citations"]))
+            print("\nSources:", ", ".join(out["citations"]))
         else:
-            print("Sources: (none)")
+            print("\nSources: (none)")
 
         print()  # blank line for readability
 

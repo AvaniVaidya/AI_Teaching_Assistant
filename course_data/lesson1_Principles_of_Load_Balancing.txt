@@ -1,0 +1,11 @@
+Topic 1: Load Balancing in Distributed Systems
+Why: Distributing Traffic for Scalability and Reliability
+
+Content:
+Load balancing is the process of distributing incoming network traffic across multiple servers to ensure no single server becomes overwhelmed. In modern distributed systems, this is essential for achieving scalability, high availability, and consistent performance. A load balancer acts as a traffic manager, sitting between clients and backend servers, routing requests based on predefined algorithms.
+
+Common load balancing algorithms include round robin, least connections, weighted round robin, and IP hash. Round robin cycles through servers sequentially, while least connections sends traffic to the server with the fewest active connections. Weighted strategies allow certain servers to handle more traffic based on capacity.
+
+Load balancers can operate at Layer 4, using transport-level information such as IP address and port, or at Layer 7, using application-level data such as HTTP headers and cookies. Layer 7 load balancing enables advanced routing decisions like directing traffic based on URL paths.
+
+To improve resilience, health checks are used to detect unhealthy servers and remove them from rotation. Modern systems often deploy load balancers in redundant configurations to avoid single points of failure. Load balancing is foundational in cloud-native architectures and microservices environments.

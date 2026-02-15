@@ -1,0 +1,11 @@
+Topic 2: Caching Strategies in System Design
+Why: Reducing Latency and Improving Throughput
+
+Content:
+Caching is the technique of storing frequently accessed data in a faster storage layer to reduce latency and backend load. It is one of the most effective ways to improve system performance and scalability.
+
+There are several types of caching strategies. Client-side caching stores data in the user’s browser or application. Server-side caching stores computed results or database query responses in memory systems such as in-memory key value stores. Content delivery networks cache static assets closer to users geographically.
+
+Common caching patterns include cache aside, read through, write through, and write back. In the cache aside pattern, the application first checks the cache and falls back to the database if the data is missing. Write through updates both the cache and the database simultaneously, while write back updates the cache first and writes to the database asynchronously.
+
+Important considerations include cache eviction policies such as least recently used and time to live, consistency challenges, and cache invalidation. Designing an effective caching layer requires balancing freshness of data with performance gains.

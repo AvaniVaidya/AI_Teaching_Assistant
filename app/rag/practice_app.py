@@ -31,6 +31,11 @@ from langchain_chroma import Chroma
 
 from langgraph.graph import StateGraph, END
 
+from app.rag.prompts import QUIZ_PROMPT
+
+import contextlib
+import io
+
 # Your MCP client wrapper (must support: async with PracticeResultsClient(...) as client)
 from app.mcp_client.mcp_tools import PracticeResultsClient
 
@@ -150,17 +155,7 @@ def generate_quiz_structured(
     """
     structured_llm = llm.with_structured_output(QuizPayload)
 
-    prompt = (
-        "You are a Class 5 Science teacher.\n"
-        "Use ONLY the CONTEXT below. Do not use outside knowledge.\n"
-        "Create exactly the requested number of MCQs.\n"
-        "Each MCQ must have 4 options labeled A, B, C, D and exactly one correct option.\n"
-        "Keep language simple for grade 5.\n"
-        "Provide a short rationale (1-2 lines) for the correct answer.\n\n"
-        f"Create exactly {n} questions for Chapter {chapter_id}.\n\n"
-        "CONTEXT:\n"
-        f"{context}"
-    )
+    prompt = QUIZ_PROMPT.format(number=n, chapter_id=chapter_id, context=context)
 
     payload: QuizPayload = structured_llm.invoke(prompt)
 
@@ -284,7 +279,7 @@ def build_quiz_graph(cfg: PracticeConfig, llm: ChatAnthropic, vectordb: Chroma):
             "question": q["question"],
             "options": q["options"],
         }
-        state["ui_feedback"] = None
+
         return state
 
     def node_evaluate(state: QuizState) -> QuizState:
@@ -304,14 +299,14 @@ def build_quiz_graph(cfg: PracticeConfig, llm: ChatAnthropic, vectordb: Chroma):
 
         if is_correct:
             state["score"] += 1
-            state["ui_feedback"] = "Correct!"
+            state["ui_feedback"] = "Correct!\n"
         else:
             correct_text = q["options"].get(correct, "")
             rationale = (q.get("rationale") or "").strip()
             state["ui_feedback"] = (
-                "Not quite.\n"
-                f"Correct answer: {correct}) {correct_text}\n"
-                f"Why: {rationale}"
+                "Not quite. "
+                f"Correct answer is [ {correct} : {correct_text} ]"
+                f" as {rationale}\n"
             )
 
         # Advance
@@ -324,7 +319,7 @@ def build_quiz_graph(cfg: PracticeConfig, llm: ChatAnthropic, vectordb: Chroma):
     def node_finish(state: QuizState) -> QuizState:
         state["done"] = True
         state["ui_question"] = None
-        state["ui_feedback"] = f"Quiz finished. Your score: {state['score']}/{state['total']}"
+        state["ui_feedback"] = f"\nQuiz finished. Your score: {state['score']}/{state['total']}"
         return state
 
     # ----------------------------
@@ -411,7 +406,7 @@ async def run_practice(chapter_id: int) -> None:
         "ui_feedback": None,
     }
 
-    print("\nPractice Mode")
+    print("Practice Mode\n")
     print(f"Student: {STUDENT_ID} | Quiz: {QUIZ_ID} | Chapter: {chapter_id}\n")
 
     # First invoke: router -> init -> ask
@@ -424,23 +419,27 @@ async def run_practice(chapter_id: int) -> None:
             state = graph.invoke(state)
             continue
 
-        print(f"Q{q['index']}/{q['total']}: {q['question']}")
+        print(f"Q{q['index']}/{q['total']}: {q['question']}\n")
         for opt_key, opt_val in q["options"].items():
-            print(f"  {opt_key}) {opt_val}")
+            print(f"{opt_key}) {opt_val}\n")
 
-        ans = input("Your answer (A/B/C/D): ").strip().upper()
+        #ans = input("Your answer (A/B/C/D): ").strip().upper()
+        ans = input().strip().upper()
 
         # Put answer into state, then invoke router -> evaluate -> ask/finish
         state["user_answer"] = ans
         state = graph.invoke(state)
 
         if state["ui_feedback"]:
-            print("\nTeacher:", state["ui_feedback"])
+            #print("\nTeacher:", state["ui_feedback"])
+            print(state["ui_feedback"], "\n")
             print()
+            state["ui_feedback"] = None
 
     # Ensure finish message is shown
     if state["ui_feedback"]:
-        print("Teacher:", state["ui_feedback"])
+        #print("Teacher:", state["ui_feedback"])
+        print(state["ui_feedback"])
         print()
 
     # Persist result and fetch stats via MCP tools
@@ -449,33 +448,19 @@ async def run_practice(chapter_id: int) -> None:
     # NOTE: Ensure your PracticeResultsClient points to the correct MCP server path
     # and that it returns dict outputs. If it returns a raw MCP result object, you’ll
     # need to extract .data or parse .content depending on your MCP SDK.
-    async with PracticeResultsClient("mcp_server/server.py") as client:
-        await client.save_quiz_result(
-            {
-                "student_id": STUDENT_ID,
-                "quiz_id": QUIZ_ID,
-                "chapter_id": chapter_id,
-                "score": int(state["score"]),
-                "total": int(state["total"]),
-                "created_at": created_at,
-            }
-        )
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        async with PracticeResultsClient("mcp_server/server.py") as client:
+            await client.save_quiz_result(
+                {
+                    "student_id": STUDENT_ID,
+                    "quiz_id": QUIZ_ID,
+                    "chapter_id": chapter_id,
+                    "score": int(state["score"]),
+                    "total": int(state["total"]),
+                    "created_at": created_at,
+                }
+            )
 
-        stats = await client.get_chapter_stats(STUDENT_ID)
-
-    # If your MCP tool returns a plain dict, this works:
-    chapters = stats.get("chapters", []) if isinstance(stats, dict) else []
-
-    if not chapters:
-        print("No progress history yet.")
-        return
-
-    print("Progress (weakest chapters first):")
-    for row in chapters:
-        print(f"- Chapter {row['chapter_id']}: {row['avg_percent']:.1f}% average over {row['quizzes']} quiz(es)")
-
-    weakest = chapters[0]["chapter_id"]
-    print(f"\nNext suggestion: practice Chapter {weakest} again.\n")
 
 
 if __name__ == "__main__":
