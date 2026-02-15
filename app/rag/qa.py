@@ -72,14 +72,6 @@ def answer_question(
     # Convert retrieved chunks into a prompt-friendly context string
     context = format_context(retrieved)
 
-    # If retrieval is empty, we should refuse (syllabus constraint)
-    if not context.strip():
-        return {
-            "question": question,
-            "answer": "This is not covered in our course notes.",
-            "citations": [],
-        }
-
     # Create/reuse Claude model client
     llm = llm or ChatAnthropic(
         model="claude-opus-4-5-20251101",
@@ -96,6 +88,13 @@ def answer_question(
 
     # Ask the model to answer grounded in the context
     response = llm.invoke(temp_messages).content
+
+    if "This is not covered in our course notes." in response:
+        return {
+            "question": question,
+            "answer": "This is not covered in our course notes.",
+            "citations": [],
+        }
 
     # Create unique citations from retrieved chunk metadata
     citations: List[str] = []
@@ -152,6 +151,7 @@ def run_chatbot() -> None:
 
         # Answer using RAG
         out = answer_question(user_input, messages, k=4, llm=llm, vectordb=vectordb)
+
         messages.append({"role": "assistant", "content": out["answer"]})
 
         # Print answer

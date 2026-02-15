@@ -465,4 +465,4 @@ async def run_practice(chapter_id: int) -> None:
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(run_practice(chapter_id=1))
+    asyncio.run(run_practice(chapter_id=2))

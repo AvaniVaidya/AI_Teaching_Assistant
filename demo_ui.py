@@ -353,9 +353,14 @@ def start_session(mode):
         transcript_a = format_assistant(text.strip())
         return s, transcript_a, gr.update(interactive=False), gr.update(interactive=False)
 
+    if mode == "Practice":
+        # Practice prints the first question; read it like an answer chunk
+        first = s.wait_for_answer().strip()
+        transcript = format_assistant(first)
+        return s, transcript, gr.update(interactive=True), gr.update(interactive=True)
+
     banner = s.wait_for_banner().strip()
-    text = banner[banner.find("Progress"):] if "Progress" in banner else banner
-    transcript = format_assistant(text)
+    transcript = format_assistant(banner)
     return s, transcript, gr.update(interactive=True), gr.update(interactive=True)
 
 
