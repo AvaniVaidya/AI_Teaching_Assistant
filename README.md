@@ -1,7 +1,12 @@
 # AI Teaching Assistant
 
-Demo Link :
+------------------------------------------------------------------------
+
+### *Demo:*
 https://drive.google.com/file/d/1C3Zbb9qS4aSRT5mgeO3pAZLeWF7_n6H-/view?usp=sharing
+
+------------------------------------------------------------------------
+
 
 
 An AI-powered Teaching Assistant designed for students that
